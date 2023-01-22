@@ -9,11 +9,9 @@
 
     npm run start 
 
-## Ссылки на видео
+## Ссылка на видео 
 
 [Часть 1](https://youtu.be/uWVXDLRmKq0)
-
-[Часть 2](https://youtu.be/PyR9ejwMgEU)
     
     
 ## Полезные ссылки
