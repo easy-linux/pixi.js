@@ -1,9 +1,5 @@
 # Пишем простенькую игру на PIXI.js
 
-## Видео для этого проекта:
-
-Часть 1 - https://youtu.be/uWVXDLRmKq0
-
 
 ## Запуск процедуры сборки прокта:
 
@@ -30,5 +26,4 @@
 
 [Настройка загрузки css/scss файлов и файлов изображений](https://github.com/easy-linux/webpack-configs/tree/main/examples/example3)
 
-[Модульный принцип конфигурирования Webpack](
-https://github.com/easy-linux/webpack-configs/tree/main/examples/example4)
+[Модульный принцип конфигурирования Webpack](https://github.com/easy-linux/webpack-configs/tree/main/examples/example4)
