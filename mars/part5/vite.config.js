@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import legacy from "@vitejs/plugin-legacy";
 
 export default defineConfig({
+  base: './',
   build: {
     target: "es2017",
     outDir: "build",

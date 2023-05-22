@@ -101,7 +101,7 @@ const gameLevels = [
   },
 ];
 
-let curentLevel = 8;
+let curentLevel = 0;
 
 export const getLevel = () => {
   return gameLevels[curentLevel];
