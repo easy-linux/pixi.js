@@ -1,58 +1,65 @@
 import * as PIXI from "pixi.js";
-import { root } from "postcss";
-import { loadAssets } from "./common/assets";
+import { getTexture, loadAssets } from "./common/assets";
 import appConstants from "./common/constants";
-import { bulletTick, clearBullets, destroyBullet, initBullets } from "./sprites/bullets";
-import { addPlayer, getPlayer, lockPlayer, playerShoots, playerTick } from "./sprites/player";
-import { destroyPerson, initPeople, peopleTick, restorePeople } from "./sprites/people";
-import { initEnemies, addEnemy, enemyTick, destroyEmeny } from "./sprites/enemy";
-import { bombTick, clearBombs, destroyBomb, initBombs } from "./sprites/bombs";
-import { checkCollision, destroySprite } from "./common/utils";
-import { initExplosions, explosionTick } from "./sprites/explosions";
+import { initBullets } from "./sprites/bullets";
+import { addPlayer, getPlayer } from "./sprites/player";
+import { initPeople, restorePeople } from "./sprites/people";
+import { initEnemies, addEnemies } from "./sprites/enemy";
+import { initBombs } from "./sprites/bombs";
+import { initExplosions } from "./sprites/explosions";
 import { initInfo } from "./sprites/infoPanel";
 import { EventHub } from "./common/eventHub";
 import { play } from "./common/sound";
-import { getGameOver, getYouWin } from "./sprites/messages";
-
+import { getGameOver, getLevelMessage, getYouWin } from "./sprites/messages";
+import { checkCollisions } from "./common/collisions";
+import { getLevelNumber, isLastLevel, nextLevel, resetLevel } from "./common/levels";
+import { addBackground, setBackgroundForLevel } from "./sprites/background";
 
 const WIDTH = appConstants.size.WIDTH;
 const HEIGHT = appConstants.size.HEIGHT;
 
-const gameState = {
-  stopped: false,
-  moveLeftActive: false,
-  moveRightActive: false,
-};
-
 let rootContainer;
+let tickMode = true;
+
+let app;
+
+let autoFire = false
+
+let background;
 
 const createScene = () => {
-  const app = new PIXI.Application({
+  app = new PIXI.Application({
     background: "#000000",
     antialias: true,
     width: WIDTH,
     height: HEIGHT,
   });
+  app.gameState = {
+    stopped: false,
+    moveLeftActive: false,
+    moveRightActive: false,
+  };
+
   document.body.appendChild(app.view);
-  gameState.app = app;
   rootContainer = app.stage;
   rootContainer.interactive = true;
   rootContainer.hitArea = app.screen;
+
+  addBackground(app, rootContainer)
 
   initInfo(app, rootContainer);
 
   const bullets = initBullets(app, rootContainer);
   rootContainer.addChild(bullets);
 
-  const player = addPlayer(app, rootContainer);
-  rootContainer.addChild(player);
+  //const player = addPlayer(app, rootContainer);
 
   const people = initPeople(app, rootContainer);
-  restorePeople();
+  //restorePeople();
   rootContainer.addChild(people);
 
   const enemies = initEnemies(app, rootContainer);
-  addEnemy();
+  //addEnemy();
   rootContainer.addChild(enemies);
 
   const bombs = initBombs(app, rootContainer);
@@ -63,105 +70,31 @@ const createScene = () => {
   return app;
 };
 
-const checkAllCollisions = () => {
-  const enemies = rootContainer.getChildByName(appConstants.containers.enemies);
-  const bullets = rootContainer.getChildByName(appConstants.containers.bullets);
-  const people = rootContainer.getChildByName(appConstants.containers.people);
-  const bombs = rootContainer.getChildByName(appConstants.containers.bombs);
-  const player = rootContainer.getChildByName(appConstants.containers.player);
-
-  if (enemies && bullets) {
-    const toRemove = [];
-    bullets.children.forEach((b) => {
-      enemies.children.forEach((e) => {
-        if (e && b) {
-          if (checkCollision(e, b)) {
-            toRemove.push(b);
-            toRemove.push(e);
-            // destroyBullet(b);
-            // destroyEmeny(e);
-          }
-        }
-      });
-    });
-    toRemove.forEach((sprite) => {
-      sprite.destroyMe();
-    });
-  }
-  if (bombs && bullets) {
-    const toRemove = [];
-    bombs.children.forEach((bomb) => {
-      bullets.children.forEach((b) => {
-        if (checkCollision(bomb, b)) {
-          toRemove.push(b);
-          toRemove.push(bomb);
-          // destroyBullet(b);
-          // destroyBomb(bomb);
-        }
-      });
-    });
-    toRemove.forEach((sprite) => {
-      sprite.destroyMe();
-    });
-  }
-
-  if (bombs && player && !player.locked) {
-    const toRemove = [];
-    bombs.children.forEach((b) => {
-      if (checkCollision(b, player)) {
-        toRemove.push(b);
-        lockPlayer();
-      }
-    });
-    toRemove.forEach((sprite) => {
-      sprite.destroyMe();
-    });
-  }
-  if (bombs && people) {
-    const toRemove = [];
-    bombs.children.forEach((bomb) => {
-      people.children.forEach((p) => {
-        if (bomb && p) {
-          if (checkCollision(bomb, p)) {
-            if (toRemove.indexOf(p) === -1) {
-              toRemove.push(p);
-            }
-            if (toRemove.indexOf(bomb) === -1) {
-              toRemove.push(bomb);
-            }
-          }
-        }
-      });
-    });
-
-    toRemove.forEach((sprite) => {
-      sprite.destroyMe();
-    });
-  }
-};
-
 const initInteraction = () => {
-  console.log("initInteraction");
-  gameState.mousePosition = getPlayer().position.x;
+  app.gameState.mousePosition = appConstants.size.WIDTH / 2;
 
-  gameState.app.stage.addEventListener("pointermove", (e) => {
-    gameState.mousePosition = e.global.x;
+  app.stage.addEventListener("pointermove", (e) => {
+    app.gameState.mousePosition = e.global.x;
   });
 
   document.addEventListener("keydown", (e) => {
     if (e.code === "Space") {
-      playerShoots();
+      getPlayer().shoot();
     }
   });
 
-  gameState.app.ticker.add((delta) => {
-    playerTick(gameState);
-    bulletTick();
-    peopleTick();
-    enemyTick();
-    bombTick();
-    explosionTick();
-    checkAllCollisions();
+  app.ticker.add((delta) => {
+    if (tickMode) {
+      EventHub.emit(appConstants.events.tick, delta);
+    } else {
+      checkCollisions((a, b) => {
+        if (a.sprite.spriteType !== b.sprite.spriteType) {
+          EventHub.emit(appConstants.events.collision, { a, b });
+        }
+      });
+    }
+
+    tickMode = !tickMode;
   });
 };
 
@@ -170,36 +103,51 @@ export const initGame = () => {
     if (progress === "all") {
       createScene();
       initInteraction();
+      rootContainer.addChild(getLevelMessage(getLevelNumber() + 1));
     }
   });
 };
 
 const restartGame = () => {
-  clearBombs()
-  clearBullets()
-  restorePeople()
-}
+  setTimeout(() => {
+    setBackgroundForLevel()
+    addPlayer(app, rootContainer);
+    addEnemies();
+    restorePeople();
+  }, 0);
+};
 
 EventHub.on(appConstants.events.youWin, () => {
-  gameState.app.ticker.stop()
-  rootContainer.addChild(getYouWin())
-  setTimeout(() => play(appConstants.sounds.youWin), 1000)
-})
+  app.ticker.stop();
+  if (isLastLevel()) {
+    rootContainer.addChild(getYouWin());
+    setTimeout(() => play(appConstants.sounds.youWin), 1000);
+  } else {
+    nextLevel();
+    rootContainer.addChild(getLevelMessage(getLevelNumber() + 1));
+  }
+});
 
 EventHub.on(appConstants.events.gameOver, () => {
-  gameState.app.ticker.stop()
-  rootContainer.addChild(getGameOver())
-  setTimeout(() => play(appConstants.sounds.gameOver), 1000)
-})
+  app.ticker.stop();
+  rootContainer.addChild(getGameOver());
+  setTimeout(() => play(appConstants.sounds.gameOver), 1000);
+});
 
 EventHub.on(appConstants.events.restartGame, (event) => {
-  restartGame()
-  if(event === appConstants.events.gameOver){
-    rootContainer.removeChild(getGameOver())
-
+  if (event === appConstants.events.gameOver) {
+    rootContainer.removeChild(getGameOver());
+    resetLevel();
+    rootContainer.addChild(getLevelMessage(getLevelNumber() + 1));
   }
-  if(event === appConstants.events.youWin){
-    rootContainer.removeChild(getYouWin())
+  if (event === appConstants.events.youWin) {
+    rootContainer.removeChild(getYouWin());
+    resetLevel();
+    restartGame();
   }
-  gameState.app.ticker.start()
-})
+  if (event === appConstants.events.levelMessage) {
+    rootContainer.removeChild(getLevelMessage());
+    restartGame();
+  }
+  app.ticker.start();
+});

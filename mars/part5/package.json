@@ -15,6 +15,7 @@
     "vite": "^4.0.4"
   },
   "dependencies": {
+    "detect-collisions": "^7.0.5",
     "howler": "^2.2.3",
     "pixi.js": "^7.0.5"
   }

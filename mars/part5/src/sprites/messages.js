@@ -70,3 +70,30 @@ export const getYouWin = () => {
   youWinMessage.position.y = appConstants.size.HEIGHT / 2 - youWinMessage.height / 2;
   return youWinMessage;
 };
+
+const levelMessage = new Container();
+levelMessage.interactive = true;
+
+const graphics3 = new Graphics();
+graphics3.lineStyle(1, 0xff00ff, 1);
+graphics3.beginFill(0x650a5a, 0.25);
+graphics3.drawRoundedRect(0, 0, 250, 100, 16);
+graphics3.endFill();
+
+levelMessage.addChild(graphics3);
+
+const text3 = new Text("Level ", style);
+text3.anchor.set(0.5);
+text3.x = 250 / 2;
+text3.y = 100 / 2;
+levelMessage.addChild(text3);
+levelMessage.on("pointertap", () => {
+  restartGame(appConstants.events.levelMessage);
+});
+
+export const getLevelMessage = (level) => {
+  text3.text = "Level " + level;
+  levelMessage.position.x = appConstants.size.WIDTH / 2 - levelMessage.width / 2;
+  levelMessage.position.y = appConstants.size.HEIGHT / 2 - levelMessage.height / 2;
+  return levelMessage;
+};

@@ -2,8 +2,9 @@ import { Container, Graphics, Sprite, Text, TextStyle } from "pixi.js";
 import { getTexture } from "../common/assets";
 import appConstants from "../common/constants";
 import { EventHub, gameOver, youWin } from "../common/eventHub";
+import { getLevel } from "../common/levels";
 import { muteEffects, pause, play, unMuteEffects } from "../common/sound";
-import appTextures, { allTextureKeys } from "../common/textures";
+import { allTextureKeys } from "../common/textures";
 
 let info;
 let app;
@@ -19,6 +20,8 @@ let musicOffStatus = true;
 
 let effectsOff;
 let effectsOffStatus = true;
+
+let ufoMaxCount = 10
 
 const style = new TextStyle({
   fontFamily: "Arial",
@@ -51,7 +54,7 @@ export const initInfo = (currApp, root) => {
   const infoPanel = new Container();
 
   infoPanel.position.x = 20;
-  infoPanel.position.y = 20;
+  infoPanel.position.y = 100;
 
   const graphics = new Graphics();
   graphics.lineStyle(1, 0xff00ff, 1);
@@ -62,7 +65,7 @@ export const initInfo = (currApp, root) => {
 
   const ufo = new Sprite(getTexture(allTextureKeys.enemyShip));
   ufo.anchor.set(0, 0.5);
-  ufo.scale.set(0.3);
+  ufo.scale.set(0.5);
   ufo.name = "ufo";
   ufo.x = 20;
   ufo.y = 30;
@@ -185,7 +188,7 @@ EventHub.on(appConstants.events.manKilled, (event) => {
 EventHub.on(appConstants.events.ufoDestroyed, (event) => {
     ufoCount += 1
     ufoText.text = `${ufoCount}`
-    if(ufoCount === 10){
+    if(ufoCount === ufoMaxCount){
         youWin()
     }
 })
@@ -195,4 +198,6 @@ EventHub.on(appConstants.events.resetPeople, (event) => {
     manText.text = `${manCount}`
     ufoCount = 0
     ufoText.text = `${ufoCount}`
+    const level = getLevel()
+    ufoMaxCount = level.enemyCount * 10
 })

@@ -11,10 +11,11 @@ const appConstants = {
         bombs: 'bombs',
         explosions: 'explosions',
         infoPanel: 'infoPanel',
+        background: 'background',
     },
     timeouts: {
         playerLock: 2000,
-        playerShoots: 1000,
+        playerShoots: 100,
     },
     probability: {
         enemyChangeDirection: 1,
@@ -26,9 +27,12 @@ const appConstants = {
         manKilled: 'manKilled',
         bombDestroyed: 'bombDestroyed',
         youWin: 'youWin',
+        levelMessage: 'levelMessage',
         gameOver: 'gameOver',
         restartGame: 'restartGame',
         resetPeople: 'resetPeople',
+        tick: 'tick',
+        collision: 'collision'
     },
     sounds: {
         shot: 'shot',
@@ -37,6 +41,13 @@ const appConstants = {
         gameOver: 'gameOver',
         youWin: 'youWin',
         background: 'background',
+    },
+    spriteType: {
+        player: 'player',
+        bullet: 'bullet',
+        man: 'man',
+        tombStone: 'tombStone',
+        bomb: 'bomb',
     },
 }
 

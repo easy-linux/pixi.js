@@ -40,18 +40,9 @@ export const addExplosion = (coords) => {
    explosion.anchor.set(0.5)
    explosion.position.set(coords.x, coords.y)
    explosions.addChild(explosion)
+   explosion.onComplete = function (e){
+    destroySprite(this)
+   }
    explosion.play()
    play(appConstants.sounds.explosion)
-}
-
-export const explosionTick = () => {
-    const toRemove = []
-    explosions.children.forEach((e) => {
-        if(!e.playing){
-            toRemove.push(e)
-        }
-    })
-    toRemove.forEach((e) => {
-        destroySprite(e)
-    })
 }
