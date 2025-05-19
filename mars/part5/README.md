@@ -11,7 +11,7 @@
 
 ## Ссылк на видео
 
-[![Видео здесь](https://img.youtube.com/vi/PyR9ejwMgEU/0.jpg)](https://www.youtube.com/watch?v=PyR9ejwMgEU)
+[![Видео здесь](https://img.youtube.com/vi/c_Exh0AKDpw/0.jpg)](https://www.youtube.com/watch?v=c_Exh0AKDpw)
     
     
 ## Остальные части
@@ -31,10 +31,6 @@
 Часть 4
 
 [![Видео здесь](https://img.youtube.com/vi/G73RghD6mPQ/0.jpg)](https://www.youtube.com/watch?v=G73RghD6mPQ)
-
-Часть 5
-
-[![Видео здесь](https://img.youtube.com/vi/c_Exh0AKDpw/0.jpg)](https://www.youtube.com/watch?v=c_Exh0AKDpw)
     
     
 ## Видео по vitejs

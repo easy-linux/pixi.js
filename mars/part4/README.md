@@ -11,7 +11,7 @@
 
 ## Ссылк на видео
 
-[![Видео здесь](https://img.youtube.com/vi/PyR9ejwMgEU/0.jpg)](https://www.youtube.com/watch?v=PyR9ejwMgEU)
+[![Видео здесь](https://img.youtube.com/vi/G73RghD6mPQ/0.jpg)](https://www.youtube.com/watch?v=G73RghD6mPQ)
     
     
 ## Остальные части
@@ -27,10 +27,6 @@
 Часть 3
 
 [![Видео здесь](https://img.youtube.com/vi/CsA1NJ6lQ3Q/0.jpg)](https://www.youtube.com/watch?v=CsA1NJ6lQ3Q)
-
-Часть 4
-
-[![Видео здесь](https://img.youtube.com/vi/G73RghD6mPQ/0.jpg)](https://www.youtube.com/watch?v=G73RghD6mPQ)
 
 Часть 5
 
