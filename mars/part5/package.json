@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "vite",
     "build": "vite build"
@@ -11,12 +12,12 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@vitejs/plugin-legacy": "^3.0.1",
-    "vite": "^4.0.4"
+    "@vitejs/plugin-legacy": "^6.1.1",
+    "vite": "^6.3.5"
   },
   "dependencies": {
-    "detect-collisions": "^7.0.5",
+    "detect-collisions": "^9.27.5",
     "howler": "^2.2.3",
-    "pixi.js": "^7.0.5"
+    "pixi.js": "^8.9.2"
   }
 }

@@ -13,7 +13,7 @@ export class Player extends BaseSprite {
 
   constructor({ container, x, y, app }) {
     const player = new Sprite(getTexture(allTextureKeys.spaceShip));
-    player.name = appConstants.containers.player;
+    player.customId = appConstants.containers.player;
     player.anchor.set(0.5);
     player.position.x = x;
     player.position.y = y;

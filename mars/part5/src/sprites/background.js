@@ -9,11 +9,12 @@ let rootContainer;
 let background
 
 export const addBackground = (currApp, root) => {
+
   app = currApp;
   rootContainer = root
 
   background = new Sprite(getTexture(allTextureKeys.background1))
-  background.name = appConstants.containers.background
+  background.customId = appConstants.containers.background
   
   background.width = appConstants.size.WIDTH 
   background.height = appConstants.size.HEIGHT

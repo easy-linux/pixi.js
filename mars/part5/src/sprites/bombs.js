@@ -9,7 +9,7 @@ let rootContainer;
 
 export const initBombs = (currApp, root) => {
   bombs = new Container();
-  bombs.name = appConstants.containers.bombs;
+  bombs.customId = appConstants.containers.bombs;
   app = currApp;
   rootContainer = root;
   return bombs;

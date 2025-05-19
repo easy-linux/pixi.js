@@ -13,7 +13,7 @@ let rootContainer;
 
 export const initEnemies = (currApp, root) => {
   enemies = new Container();
-  enemies.name = appConstants.containers.enemies;
+  enemies.customId = appConstants.containers.enemies;
   app = currApp;
   rootContainer = root;
   return enemies;

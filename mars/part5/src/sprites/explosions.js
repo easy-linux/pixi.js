@@ -13,7 +13,7 @@ const explosionTextures = {}
 
 export const initExplosions = (currApp, root) => {
     explosions = new Container()
-    explosions.name = appConstants.containers.explosions
+    explosions.customId = appConstants.containers.explosions
     app = currApp
     root.addChild(explosions)
     return explosions

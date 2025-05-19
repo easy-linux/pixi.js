@@ -12,7 +12,7 @@ const allTextures = {};
 
 export const initBullets = (currApp, root) => {
   bullets = new Container();
-  bullets.name = appConstants.containers.bullets;
+  bullets.customId = appConstants.containers.bullets;
   app = currApp
   return bullets;
 };

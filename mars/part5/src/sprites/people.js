@@ -21,7 +21,7 @@ export const initPeople = (currApp, root) => {
     tombStoneFrames = [getTexture(allTextureKeys.TombStone1), getTexture(allTextureKeys.TombStone2)];
   }
   people = new Container();
-  people.name = appConstants.containers.people;
+  people.customId = appConstants.containers.people;
   app = currApp;
   rootContainer = root;
   return people;

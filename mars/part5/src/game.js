@@ -27,45 +27,48 @@ let autoFire = false
 
 let background;
 
-const createScene = () => {
-  app = new PIXI.Application({
-    background: "#000000",
-    antialias: true,
+const createScene = async () => {
+  app = new PIXI.Application();
+  await app.init({
     width: WIDTH,
     height: HEIGHT,
+    antialias: true,
+    transparent: false,
+    resolution: 1,
+    background: "#000000",
+
   });
+
   app.gameState = {
     stopped: false,
     moveLeftActive: false,
     moveRightActive: false,
   };
 
-  document.body.appendChild(app.view);
+  document.body.appendChild(app.canvas);
   rootContainer = app.stage;
-  rootContainer.interactive = true;
+  rootContainer.eventMode = 'static';
   rootContainer.hitArea = app.screen;
 
-  addBackground(app, rootContainer)
+  // initInfo(app, rootContainer);
 
-  initInfo(app, rootContainer);
+  // const bullets = initBullets(app, rootContainer);
+  // rootContainer.addChild(bullets);
 
-  const bullets = initBullets(app, rootContainer);
-  rootContainer.addChild(bullets);
+  // //const player = addPlayer(app, rootContainer);
 
-  //const player = addPlayer(app, rootContainer);
+  // const people = initPeople(app, rootContainer);
+  // //restorePeople();
+  // rootContainer.addChild(people);
 
-  const people = initPeople(app, rootContainer);
-  //restorePeople();
-  rootContainer.addChild(people);
+  // const enemies = initEnemies(app, rootContainer);
+  // //addEnemy();
+  // rootContainer.addChild(enemies);
 
-  const enemies = initEnemies(app, rootContainer);
-  //addEnemy();
-  rootContainer.addChild(enemies);
+  // const bombs = initBombs(app, rootContainer);
+  // rootContainer.addChild(bombs);
 
-  const bombs = initBombs(app, rootContainer);
-  rootContainer.addChild(bombs);
-
-  initExplosions(app, rootContainer);
+  // initExplosions(app, rootContainer);
 
   return app;
 };
@@ -98,14 +101,38 @@ const initInteraction = () => {
   });
 };
 
-export const initGame = () => {
+export const initGame = async () => {
+
+  app = await createScene();
+
   loadAssets((progress) => {
     if (progress === "all") {
-      createScene();
+
+      addBackground(app, rootContainer)
+      initInfo(app, rootContainer);
+
+      const bullets = initBullets(app, rootContainer);
+      rootContainer.addChild(bullets);
+
+      //const player = addPlayer(app, rootContainer);
+
+      const people = initPeople(app, rootContainer);
+      //restorePeople();
+      rootContainer.addChild(people);
+
+      const enemies = initEnemies(app, rootContainer);
+      //addEnemy();
+      rootContainer.addChild(enemies);
+
+      const bombs = initBombs(app, rootContainer);
+      rootContainer.addChild(bombs);
+
+      initExplosions(app, rootContainer);
       initInteraction();
       rootContainer.addChild(getLevelMessage(getLevelNumber() + 1));
     }
   });
+  return
 };
 
 const restartGame = () => {

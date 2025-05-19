@@ -1,4 +1,5 @@
-import { Container, Graphics, Sprite, Text, TextStyle } from "pixi.js";
+import { Container, Graphics, Sprite, Text, TextStyle, FillGradient } from "pixi.js";
+import * as PIXI from "pixi.js";
 import { getTexture } from "../common/assets";
 import appConstants from "../common/constants";
 import { EventHub, gameOver, youWin } from "../common/eventHub";
@@ -23,18 +24,25 @@ let effectsOffStatus = true;
 
 let ufoMaxCount = 10
 
+const gradient = new FillGradient({
+  type: 'linear',
+  start: { x: 0, y: 0 },  // Start at top
+  end: { x: 0, y: 1 },
+  colorStops: [
+    { offset: 0, color: 0xffffff },
+    { offset: 1, color: 0x00ff99 },
+  ],
+  textureSpace: 'local'
+});
+
 const style = new TextStyle({
   fontFamily: "Arial",
   fontSize: 36,
   fontStyle: "normal",
   fontWeight: "bold",
-  fill: ["#ffffff", "#00ff99"], // <- gradient
-  stroke: "#4a1850",
-  strokeThickness: 5,
-  dropShadow: true,
-  dropShadowColor: "#000000",
-  dropShadowBlur: 4,
-  dropShadowDistance: 6,
+  fill: gradient,
+  stroke: { color: 0x4a1850, strokeThickness: 5 },
+  dropShadow: {color: 0x000000, blur: 4, distance: 6},
   wordWrap: true,
   wordWrapWidth: 440,
   lineJoin: "round",
@@ -47,7 +55,7 @@ export const initInfo = (currApp, root) => {
   const effectsOnTexture = getTexture(allTextureKeys.effectsOn);
 
   info = new Container();
-  info.name = appConstants.containers.infoPanel;
+  info.customId = appConstants.containers.infoPanel;
 
   app = currApp;
 
@@ -57,43 +65,50 @@ export const initInfo = (currApp, root) => {
   infoPanel.position.y = 100;
 
   const graphics = new Graphics();
-  graphics.lineStyle(1, 0xff00ff, 1);
-  graphics.beginFill(0x650a5a, 0.25);
-  graphics.drawRoundedRect(0, 0, 150, 100, 16);
-  graphics.endFill();
+
+  graphics.roundRect(0, 0, 150, 100, 16);
+  graphics.fill({ color: 0x650a5a, alpha: 0.25 });
+  graphics.stroke({ width: 1, color: 0xff00ff, alpha: 1 });
+
+
+
+
   infoPanel.addChild(graphics);
 
   const ufo = new Sprite(getTexture(allTextureKeys.enemyShip));
   ufo.anchor.set(0, 0.5);
   ufo.scale.set(0.5);
-  ufo.name = "ufo";
+  ufo.customId = "ufo";
   ufo.x = 20;
   ufo.y = 30;
 
   infoPanel.addChild(ufo);
 
-  ufoText = new Text("0", style);
+  ufoText = new Text({
+    text: "0",
+    style
+  });
   ufoText.anchor.set(0.5);
   ufoText.x = 100;
   ufoText.y = 30;
-  ufoText.name = "ufotext";
+  ufoText.customId = "ufotext";
   infoPanel.addChild(ufoText);
 
   ///
   const man = new Sprite(getTexture(allTextureKeys.man));
   man.anchor.set(0, 0.5);
   man.scale.set(0.8);
-  man.name = "man";
+  man.customId = "man";
   man.x = 25;
   man.y = 70;
 
   infoPanel.addChild(man);
 
-  manText = new Text("0", style);
+  manText = new Text({ text: "0", style });
   manText.anchor.set(0.5);
   manText.x = 100;
   manText.y = 70;
-  manText.name = "manText";
+  manText.customId = "manText";
   infoPanel.addChild(manText);
 
   ///
@@ -104,34 +119,33 @@ export const initInfo = (currApp, root) => {
   const musicButton = new Container();
   musicButton.x = appConstants.size.WIDTH - 100;
   musicButton.y = 100;
-  musicButton.name = "musicButton";
+  musicButton.customId = "musicButton";
 
   const graphicsMusicOff = new Graphics();
-  graphicsMusicOff.lineStyle(2, 0xff00ff, 1);
-  graphicsMusicOff.beginFill(0x650a5a, 0.25);
-  graphicsMusicOff.drawCircle(15, 15, 30);
-  graphicsMusicOff.endFill();
+  graphicsMusicOff.circle(15, 15, 30);
+  graphicsMusicOff.stroke({ width: 2, color: 0xff00ff, alpha: 1 });
+  graphicsMusicOff.fill({ color: 0x650a5a, alpha: 0.25 });
   musicButton.addChild(graphicsMusicOff);
 
   musicOff = new Sprite(musicOffStatus ? musicOffTexture : musicOnTexture);
   if (musicOffStatus) {
     pause(appConstants.sounds.background)
   } else {
-      play(appConstants.sounds.background)
+    play(appConstants.sounds.background)
   }
 
   musicOff.x = -9;
   musicOff.y = -9;
-  musicOff.name = "musicOff";
+  musicOff.customId = "musicOff";
   musicButton.addChild(musicOff);
-  musicButton.interactive = true;
+  musicButton.eventMode = 'static';
   musicButton.on("pointertap", () => {
     musicOffStatus = !musicOffStatus;
     musicOff.texture = musicOffStatus ? musicOffTexture : musicOnTexture;
     if (musicOffStatus) {
       pause(appConstants.sounds.background)
     } else {
-        play(appConstants.sounds.background)
+      play(appConstants.sounds.background)
     }
   });
   info.addChild(musicButton);
@@ -140,13 +154,12 @@ export const initInfo = (currApp, root) => {
   const effectsButton = new Container();
   effectsButton.x = appConstants.size.WIDTH - 100;
   effectsButton.y = 200;
-  effectsButton.name = "musicButton";
+  effectsButton.customId = "musicButton";
 
   const graphicsEffectsOff = new Graphics();
-  graphicsEffectsOff.lineStyle(2, 0xff00ff, 1);
-  graphicsEffectsOff.beginFill(0x650a5a, 0.25);
-  graphicsEffectsOff.drawCircle(15, 15, 30);
-  graphicsEffectsOff.endFill();
+  graphicsEffectsOff.circle(15, 15, 30);
+  graphicsEffectsOff.stroke({ width: 2, color: 0xff00ff, alpha: 1 });
+  graphicsEffectsOff.fill({ color: 0x650a5a, alpha: 0.25 });
   effectsButton.addChild(graphicsEffectsOff);
 
   effectsOff = new Sprite(effectsOffStatus ? effectsOffTexture : effectsOnTexture);
@@ -158,17 +171,17 @@ export const initInfo = (currApp, root) => {
 
   effectsOff.x = -9;
   effectsOff.y = -9;
-  effectsOff.name = "effectsOff";
+  effectsOff.customId = "effectsOff";
   effectsButton.addChild(effectsOff);
-  effectsButton.interactive = true;
+  effectsButton.eventMode = 'static';
   effectsButton.on("pointertap", () => {
     effectsOffStatus = !effectsOffStatus;
     effectsOff.texture = effectsOffStatus ? effectsOffTexture : effectsOnTexture
     if (effectsOffStatus) {
-        muteEffects()
-      } else {
-        unMuteEffects()
-      }
+      muteEffects()
+    } else {
+      unMuteEffects()
+    }
   });
   info.addChild(effectsButton);
 
@@ -178,26 +191,26 @@ export const initInfo = (currApp, root) => {
 };
 
 EventHub.on(appConstants.events.manKilled, (event) => {
-    manCount -= 1
-    manText.text = `${manCount}`
-    if(manCount === 0){
-        gameOver()
-    }
+  manCount -= 1
+  manText.text = `${manCount}`
+  if (manCount === 0) {
+    gameOver()
+  }
 })
 
 EventHub.on(appConstants.events.ufoDestroyed, (event) => {
-    ufoCount += 1
-    ufoText.text = `${ufoCount}`
-    if(ufoCount === ufoMaxCount){
-        youWin()
-    }
+  ufoCount += 1
+  ufoText.text = `${ufoCount}`
+  if (ufoCount === ufoMaxCount) {
+    youWin()
+  }
 })
 
 EventHub.on(appConstants.events.resetPeople, (event) => {
-    manCount = event.count
-    manText.text = `${manCount}`
-    ufoCount = 0
-    ufoText.text = `${ufoCount}`
-    const level = getLevel()
-    ufoMaxCount = level.enemyCount * 10
+  manCount = event.count
+  manText.text = `${manCount}`
+  ufoCount = 0
+  ufoText.text = `${ufoCount}`
+  const level = getLevel()
+  ufoMaxCount = level.enemyCount * 10
 })

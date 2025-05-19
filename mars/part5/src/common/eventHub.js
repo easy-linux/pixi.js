@@ -1,8 +1,8 @@
-import { utils } from 'pixi.js'
+import { EventEmitter } from 'pixi.js'
 import appConstants from './constants'
 
 
-export const EventHub = new utils.EventEmitter()
+export const EventHub = new EventEmitter()
 
 export const infoUpdated = (data) => {
     EventHub.emit(appConstants.events.infoUpdated, data)

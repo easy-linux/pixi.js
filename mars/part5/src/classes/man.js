@@ -10,7 +10,7 @@ export class Man extends BaseSprite {
   constructor({ container, x, y, index, peopleFrames, tombStoneFrames }) {
     const man = new Sprite(peopleFrames[randomIntFromInterval(0, peopleFrames.length - 1)]);
     man.anchor.set(0.5, 1);
-    man.name = index;
+    man.customId = index;
     man.alive = true;
     man.position.x = x;
     man.position.y = y;
